@@ -1,0 +1,57 @@
+import random
+import string
+#Here we will give the Target string that we want to evolve towards
+target = "GENETIC"
+#Here we will give the function to generate a random individual i.e.string of characters
+def generate_individual(length):
+    return ''.join(random.choice(string.ascii_lowercase) for _ in range(length))
+# Here we give the function to calculate the fitness of an individual
+def fitness(individual):
+   return sum(1 for a, b in zip(individual, target) if a == b)
+# Next we give the function for selection i.e. roulette wheel selection
+def select(population, fitness_scores):
+    total_fitness = sum(fitness_scores)
+    r = random.uniform(0, total_fitness)
+    Aggregated_fitness = 0
+    for a, individual in enumerate(population):
+        Aggregated_fitness += fitness_scores[a]
+        if Aggregated_fitness >= r:
+            return individual
+# Here we will give function for single-point crossover
+def crossover(parent1, parent2):
+    point = random.randint(1, len(parent1) - 1)
+    child1 = parent1[:point] + parent2[point:]
+    child2 = parent2[:point] + parent1[point:]
+    return child1, child2
+# here we give function for mutation
+def mutate(individual, mutation_rate):
+    m= list(individual)
+    for a in range(len(m)):
+        if random.random() < mutation_rate:
+            m[a] = random.choice(string.printable)
+    return ''.join(m)
+# we give Genetic algorithm parameters
+population_size = 100
+mutation_rate = 0.01
+generations = 1000
+# Here we initialize the population with random individuals
+population = [generate_individual(len(target)) for _ in range(population_size)]
+for generation in range(generations):
+    scores = [fitness(individual) for individual in population]
+    # here we Check if we havefound the target string
+    if target in population:
+        print(f"Target found in generation {generation}!")
+        break
+    # will create a new population
+    new_population = []
+    for _ in range(population_size // 2):
+        parent1 = select(population, scores)
+        parent2 = select(population, scores)
+        child1, child2 = crossover(parent1, parent2)
+        child1 = mutate(child1, mutation_rate)
+        child2 = mutate(child2, mutation_rate)
+        new_population.extend([child1, child2])
+    population = new_population
+# If the target is not found after all the generations then we will display this message
+else:
+    print("Target not found in any generation.")
