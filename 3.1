@@ -1,0 +1,39 @@
+def minimax(node, depth, is_maximizing):
+    # Base case: if we've reached a leaf node (end of the game tree)
+    if depth == 0 or node is None:
+        return node.value  # Return the value of the leaf node
+
+    if is_maximizing:
+        best_value = float('-inf')
+        for child in node.children:
+            value = minimax(child, depth - 1, False)
+            best_value = max(best_value, value)
+        return best_value
+    else:
+        best_value = float('inf')
+        for child in node.children:
+            value = minimax(child, depth - 1, True)
+            best_value = min(best_value, value)
+        return best_value
+
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.children = []
+
+# Create the game tree
+root = Node(None)
+root.children = [Node(3), Node(5)]
+root.children[0].children = [Node(17), Node(8)]
+root.children[1].children = [Node(-2), Node(5), Node(-1), Node(7)]
+
+# Calculate the best move for the root node (maximizing player)
+best_move = None
+best_value = float('-inf')
+for i, child in enumerate(root.children):
+    value = minimax(child, depth=3, is_maximizing=False)
+    if value > best_value:
+        best_value = value
+        best_move = i
+
+print(f"Best move for the root node: {best_move}, with value: {best_value}")
