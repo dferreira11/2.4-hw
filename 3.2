@@ -1,0 +1,28 @@
+def alpha_beta_pruning(node, depth, alpha, beta, maximizing_player):
+    if depth == 0 or node.is_terminal():
+        return node.value()
+
+    if maximizing_player:
+        for child in node.children():
+            alpha = max(alpha, alpha_beta_pruning(child, depth - 1, alpha, beta, False))
+
+            if alpha >= beta:
+                break
+
+        return alpha
+
+    else:
+        for child in node.children():
+            beta = min(beta, alpha_beta_pruning(child, depth - 1, alpha, beta, True))
+
+            if alpha >= beta:
+                break
+
+        return beta
+    from alpha_beta_pruning import alpha_beta_pruning
+
+    root = Node(None, [-10, -20, 5, 0])
+
+    optimal_value = alpha_beta_pruning(root, 2, float("-inf"), float("+inf"), True)
+
+    print(optimal_value)
