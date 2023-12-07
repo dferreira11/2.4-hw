@@ -1,0 +1,37 @@
+# Import necessary libraries
+import pandas as pd
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+# Load the dataset
+file_path = r'C:\Users\ZEUS\Downloads\Credit Card Customer Data.csv'
+data = pd.read_csv(file_path)
+
+# Display the first few rows of the dataset
+print(data.head())
+
+# Select features for clustering
+features = ['Avg_Credit_Limit', 'Total_Credit_Cards', 'Total_visits_bank', 'Total_visits_online', 'Total_calls_made']
+X = data[features]
+
+# Choosing the number of clusters (K)
+k = 3
+
+# Applying KMeans algorithm
+kmeans = KMeans(n_clusters=k, random_state=42)
+kmeans.fit(X)
+
+# Adding cluster labels to the dataframe
+data['Cluster'] = kmeans.labels_
+
+# Visualizing the clusters
+plt.scatter(data['Avg_Credit_Limit'], data['Total_calls_made'], c=data['Cluster'], cmap='viridis')
+plt.xlabel('Average Credit Limit')
+plt.ylabel('Total Calls Made')
+plt.title('Customer Segmentation - KMeans Clustering')
+plt.show()
+
+# Displaying the centroids of the clusters
+centroids = kmeans.cluster_centers_
+print("Centroid values:")
+print(pd.DataFrame(centroids, columns=features))
